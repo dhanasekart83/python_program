@@ -1,33 +1,34 @@
+# Python library to populate randomness
 import random
-
+#Initial population of random chromosomes
 def random_chromosome(size): #making random chromosomes 
     return [ random.randint(1, nq) for _ in range(nq) ]
-
+#Fitness function of the chromosome 
 def fitness(chromosome):
-    horizontal_collisions = sum([chromosome.count(queen)-1 for queen in chromosome])/2
-    diagonal_collisions = 0
+    hori_collis = sum([chromosome.count(queen)-1 for queen in chromosome])/2
+    dig_collis = 0
 
     n = len(chromosome)
-    left_diagonal = [0] * 2*n
-    right_diagonal = [0] * 2*n
+    left_dig = [0] * 2*n
+    right_dig = [0] * 2*n
     for i in range(n):
-        left_diagonal[i + chromosome[i] - 1] += 1
-        right_diagonal[len(chromosome) - i + chromosome[i] - 2] += 1
+        left_dig[i + chromosome[i] - 1] += 1
+        right_dig[len(chromosome) - i + chromosome[i] - 2] += 1
 
-    diagonal_collisions = 0
+    dig_collis = 0
     for i in range(2*n-1):
         counter = 0
-        if left_diagonal[i] > 1:
-            counter += left_diagonal[i]-1
-        if right_diagonal[i] > 1:
-            counter += right_diagonal[i]-1
-        diagonal_collisions += counter / (n-abs(i-n+1))
+        if left_dig[i] > 1:
+            counter += left_dig[i]-1
+        if right_dig[i] > 1:
+            counter += right_dig[i]-1
+        dig_collis += counter / (n-abs(i-n+1))
     
-    return int(maxFitness - (horizontal_collisions + diagonal_collisions)) #28-(2+3)=23
-
+    return int(maxFitness - (hori_collis + dig_collis)) #28-(2+3)=23
+#Check for max fitness 
 def probability(chromosome, fitness):
     return fitness(chromosome) / maxFitness
-
+#Random population 
 def random_pick(population, probabilities):
     populationWithProbabilty = zip(population, probabilities)
     total = sum(w for c, w in populationWithProbabilty)
@@ -38,19 +39,19 @@ def random_pick(population, probabilities):
             return c
         upto += w
     assert False, "Shouldn't get here"
-        
-def reproduce(x, y): #doing cross_over between two chromosomes
+# Process of cross_over between two chromosomes        
+def reproduce(x, y): 
     n = len(x)
     c = random.randint(0, n - 1)
     return x[0:c] + y[c:n]
-
-def mutate(x):  #randomly changing the value of a random index of a chromosome
+#Mutation process - randomly changing the value of a random index of a chromosome
+def mutate(x):  
     n = len(x)
     c = random.randint(0, n - 1)
     m = random.randint(1, n)
     x[c] = m
     return x
-
+#Queen algorithm
 def genetic_queen(population, fitness):
     mutation_probability = 0.03
     new_population = []
@@ -65,11 +66,11 @@ def genetic_queen(population, fitness):
         new_population.append(child)
         if fitness(child) == maxFitness: break
     return new_population
-
+#Chromosome 
 def print_chromosome(chrom):
     print("Chromosome = {},  Fitness = {}"
         .format(str(chrom), fitness(chrom)))
-
+# Main function of the queen 
 if __name__ == "__main__":
     nq = int(input("Enter Number of Queens: ")) #say N = 8
     maxFitness = (nq*(nq-1))/2  # 8*7/2 = 28
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     for i in range(nq):
         board[nq-chrom_out[i]][i]="Q"
             
-
+# Chess board
     def print_board(board):
         for row in board:
             print (" ".join(row))
